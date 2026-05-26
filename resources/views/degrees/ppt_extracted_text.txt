@@ -1,0 +1,668 @@
+﻿===== SLIDE1 =====
+Laravel Validations, Redirect, Logs, Eloquent Relationships
+ELECTIVE 1 - WEB SYSTEMS AND TECHNOLOGIES 2 
+Module 7 
+NCMH
+
+===== SLIDE2 =====
+Form Validation in Laravel
+Validation ensures that user inputs meet certain rules before being processed.
+Validation is usually handled in the controller.
+Basic Validation Example
+public function store(Request $request) {
+    $request->validate([
+        'name' => 'required|min:3',
+        'email' => '
+required|email
+',
+        'password' => 'required|min:6'
+    ]);
+    return "Form Submitted Successfully";
+}
+
+===== SLIDE3 =====
+Common Validation Rules
+Rule
+Meaning
+required
+Field must not be empty
+email
+Must be valid email
+min:6
+Minimum 6 characters
+max:255
+Maximum length
+numeric
+Must be a number
+unique:users
+Must be unique in users table
+
+===== SLIDE4 =====
+Displaying Validation Errors in Blade
+When validation fails, Laravel automatically redirects back with error messages.
+Display All Errors
+@if($errors->any())
+    <ul>
+        @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @
+endforeach
+    </ul>
+@endif
+
+===== SLIDE5 =====
+Displaying Validation Errors in Blade
+Display Error for Specific Field
+@error('name')
+    <p style="
+color:red
+;">{{ $message }}</p>
+@
+enderror
+
+===== SLIDE6 =====
+Old Input Values (Sticky Forms)
+When validation fails, Laravel preserves old input data.
+<input type="text" name="name" value="{{ old('name') }}">
+This improves user experience.
+
+===== SLIDE7 =====
+Manually Creating Validations
+In function store() of the controller replace the validate blockâ€¦
+$validator
+=
+Validator
+::
+make
+(
+$request
+->
+all
+(),
+[
+"
+studentid
+"
+=>
+"required|min:4|max:20|unique:students"
+,
+"
+fname
+"
+=>
+"required|min:5|max:20"
+,
+"
+lastname
+"
+=>
+"required|min:5|max:20"
+]
+); 
+if
+(
+$validator
+->
+fails
+()){
+	return
+redirect
+(
+â€student/create"
+)
+->
+withErrors
+(
+$validator
+)->
+withInput
+();
+}
+Put on top: 
+use
+Validator
+;
+Add the ff: on every input fields: 
+value
+=
+"{{old(â€˜
+studentid
+')}}"
+3/30/26
+7
+
+===== SLIDE8 =====
+HTTP Redirect in Laravel
+In the code:
+return
+redirect
+(
+"employees/create"
+)->
+withErrors
+(
+$validator
+)->
+withInput
+();
+We may use:
+return
+back
+()->
+withErrors
+(
+$validator
+)->
+withInput
+();
+back()
+This is a Laravel helper function that redirects the userÂ 
+back to the previous page
+. It is useful after form submissions, errors, or actions that require users to return to where they came from.
+3/30/26
+8
+
+===== SLIDE9 =====
+Redirect to Named Route
+Create a controller â€œ
+RedirectController
+â€
+I
+n the web route write:
+Route
+::
+get
+(
+â€˜/try'
+, [
+RedirectController
+::
+class
+, 
+'indexâ€™
+])
+->
+name
+(
+"
+RedirectIndex
+"
+);
+Route
+::
+get
+(
+'/
+redirectme
+'
+,
+function
+(){
+return
+redirect
+()->
+route
+(
+"
+RedirectIndex
+"
+);
+});
+I
+n the 
+â€œ
+RedirectController
+â€ write inside the class
+public
+function
+index
+(){
+	return
+"This is an index function of 
+redirectController
+"
+;
+}
+Try to browse the URI: 
+/
+redirectme
+3/30/26
+9
+
+===== SLIDE10 =====
+If with message:
+Change the URI 
+'/tryâ€™
+to 
+'/try/{message}â€™ 
+and add:
+[
+"message"
+=>
+"This is my message"
+] 
+in the 
+redirectme
+ URI
+return
+redirect
+()->
+route
+(
+"
+RedirectIndex
+"
+,
+	[
+"message"
+=>
+"This is my message"
+]);
+C
+reate a function in the RedirectController:
+public
+function
+showMessage
+(
+$message
+){
+		return
+$message
+;
+}
+Change 
+â€˜indexâ€™ 
+in the route to 
+'
+showMessage
+'
+3/30/26
+10
+
+===== SLIDE11 =====
+I
+f redirect to Controller
+C
+omment the return redirectâ€¦.
+Write:
+return
+redirect
+()->
+action
+([
+RedirectController
+::
+class
+,
+'
+showsomething
+'
+]);
+G
+o to 
+RedirectController
+create a function 
+showSomething
+()
+public
+function
+showSomething
+(
+$message
+){
+	return
+"something"
+;
+}
+In web route, write:
+ Route
+::
+get
+(
+'/
+showSomething
+'
+, [
+RedirectController
+::
+class
+, 
+'
+showSomething
+'
+]);
+Try to browse the URI: 
+/
+redirectme
+3/30/26
+11
+
+===== SLIDE12 =====
+If with Data:
+Route
+::
+get
+(
+'/
+showSomething
+/{message}'
+, [
+RedirectController
+::
+class
+, 
+'
+showSomething
+'
+]);
+Add this code:
+return
+redirect
+()
+->
+action
+([
+RedirectController
+::
+class
+, 
+'
+showSomething
+'
+],[
+"message"
+=>
+"This is my message"
+]);
+3/30/26
+12
+
+===== SLIDE13 =====
+HTTP Redirect with Flash Session Data
+I
+n the 
+Controller,
+ in 
+echo
+"Successfully Added"
+; 
+change it to:
+	return
+redirect
+(
+"/student"
+)
+->
+with
+(
+"
+message"
+,
+â€Student
+ Successfully Saved!"
+);
+In the student.blade.php anywhere from the top write:
+@if(session("message"))
+	<
+strong
+>
+{{session("message")}}
+</
+strong
+>
+@endif
+3/30/26
+13
+
+===== SLIDE14 =====
+Logging in Laravel
+To see the Logs, go to storage>logs>laravel.log
+O
+ther facades or functions
+On the top of a controller, write:
+	use
+Log
+;
+On a function before a redirect function, write:
+$msg
+ = 
+â€Student is Added!"
+;
+Log
+::
+info
+(
+$msg
+);
+Log
+::
+notice
+(
+$msg
+);
+Log
+::
+alert
+(
+$msg
+);
+Log
+::
+emergency
+(
+$msg
+);
+Log
+::
+alert
+(
+$msg
+);
+Log
+::
+critical
+(
+$msg
+);
+Log
+::
+error
+(
+$msg
+);
+Log
+::
+warning
+(
+$msg
+);
+Log
+::
+alert
+(
+$msg
+);
+Note: change .env local to production and serve it again
+3/30/26
+14
+
+===== SLIDE15 =====
+Eloquent Relationships in Laravel
+What is Eloquent ORM?
+Laravel uses 
+Eloquent ORM (Object-Relational Mapping)
+ to interact with databases using PHP objects instead of raw SQL.
+Eloquent relationships allow you to define how different database tables are connected and interact with each other in an intuitive, object-oriented way.
+Why Use Eloquent Relationships?
+Eliminates complex SQL joins 
+Improves code readability 
+Makes database queries reusable 
+Supports powerful features like eager loading and constraints 
+
+===== SLIDE16 =====
+Common Types of Eloquent Relationships
+1. One-to-One Relationship
+One record in a table is related to one record in another table.
+Example:
+A 
+User
+ has one 
+Profile
+Tables:
+users table (id, name, email)
+profiles table (id, 
+user_id
+, bio, avatar)
+	(with 
+user_id
+ as foreign key) 
+user_id
+ references 
+users.id
+Migration:
+$table->
+foreignId
+('
+user_id
+â€™)
+	->constrained();
+or
+$table->
+foreignId
+('
+user_id
+â€™)
+	->constrained(â€users");
+Model Code:
+User.php
+public function profile()
+{
+    return $this->
+hasOne
+(Profile::class);
+}
+Profile.php
+public function user()
+{
+    return $this->
+belongsTo
+(User::class);
+}
+Usage:
+$user = User::find(1);
+echo $user->profile->bio;
+
+===== SLIDE17 =====
+Common Types of Eloquent Relationships
+2. One-to-Many Relationship
+One record can have many related records.
+Example:
+A 
+Post
+ belongs to a 
+User
+, and a 
+User
+ has many posts.
+Tables:
+users table (id, name, email)
+posts table (id, 
+user_id
+, title, content)
+	(with 
+user_id
+ as foreign key) 
+Model Code:
+User.php
+public function posts()
+{
+    return $this->
+hasMany
+(Post::class);
+}
+Post.php
+public function user()
+{
+    return $this->
+belongsTo
+(User::class);
+}
+Usage:
+$user = User::find(1);
+foreach ($user->posts as $post) {
+    echo $post->title;
+}
+
+===== SLIDE18 =====
+Common Types of Eloquent Relationships
+3. Many-to-Many Relationship
+Many records in one table relate to many records in another.
+Example:
+Students â†” Courses
+Tables:
+students (id, name)
+courses (id, title)
+course_student
+(id, 
+student_id
+, 
+course_id
+)(pivot table)
+$table->
+unsignedBigInteger
+('
+course_id
+');
+$table->
+unsignedBigInteger
+('
+student_id
+');
+Model Code:
+Student.php
+public function courses()
+{
+    return $this->
+belongsToMany
+(Course::class, '
+course__students
+', '
+student_id
+', '
+course_id
+');
+}
+Course.php
+public function students()
+{
+    return $this->
+belongsToMany
+(Student::class, '
+course__students
+', '
+course_id
+', '
+student_id
+');
+}
+Usage:
+$student = Student::find(1);
+foreach ($student->courses as $course) {
+    echo $course->title;
+}
+
+===== SLIDE19 =====
+(no text)
+
+===== SLIDE20 =====
+(no text)
+
+===== SLIDE21 =====
+(no text)
+
+===== SLIDE22 =====
+(no text)
+
+===== SLIDE23 =====
+(no text)
+

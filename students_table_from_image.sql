@@ -1,0 +1,15 @@
+-- -- SQL based on the pasted image structure
+-- -- Use this in phpMyAdmin (SQL tab) for MySQL/MariaDB
+
+-- CREATE TABLE IF NOT EXISTS `students` (
+--   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+--   `fname` VARCHAR(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+--   `mname` VARCHAR(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+--   `lname` VARCHAR(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+--   `email` VARCHAR(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+--   `contact_no` BIGINT(15) NOT NULL,
+--   `created_at` TIMESTAMP NULL DEFAULT NULL,
+--   `updated_at` TIMESTAMP NULL DEFAULT NULL,
+--   `degreee_id` BIGINT(20) UNSIGNED NOT NULL,
+--   PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
