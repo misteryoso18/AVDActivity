@@ -11,10 +11,13 @@ WORKDIR /var/www
 
 # I-cache muna ang dependencies bago kopyahin ang buong source
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Saka kopyahin ang buong code
 COPY . .
+
+# Patakbuhin ang artisan package:discover (ngayon nandito na ang artisan file)
+RUN php artisan package:discover --ansi
 
 # Tiyaking may tamang permission ang storage at cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
