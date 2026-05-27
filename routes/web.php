@@ -81,8 +81,11 @@ Route::middleware('App\Http\Middleware\DownForMaintnanceMW')->group(function () 
             Route::get('/admin/add-teacher', [UserController::class, 'showAddTeacherForm'])->name('admin.add.teacher');
             Route::post('/admin/store-teacher', [UserController::class, 'storeTeacher'])->name('admin.store.teacher');
 
-            // Export routes
-            Route::get('/exports', [ExportController::class, 'index'])->name('export.index');
+            // Reports / export routes
+            Route::get('/reports', [ExportController::class, 'index'])->name('report.index');
+            Route::get('/exports', function () {
+                return redirect()->route('report.index');
+            })->name('export.index');
             Route::get('/exports/students/pdf', [ExportController::class, 'exportStudentsPDF'])->name('export.students.pdf');
             Route::get('/exports/students/excel', [ExportController::class, 'exportStudentsExcel'])->name('export.students.excel');
             Route::get('/exports/degrees/pdf', [ExportController::class, 'exportDegreesPDF'])->name('export.degrees.pdf');

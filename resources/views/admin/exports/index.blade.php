@@ -1,12 +1,13 @@
 @extends('format.layout')
 
-@section('title', 'Export Reports')
+@section('title', 'Report')
 
 @section('Content')
 <div class="row mb-4">
     <div class="col-12">
         <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 2rem; border-radius: 8px;">
-            <h1 style="color: white; margin: 0; font-size: 2rem;"><i class="fas fa-download me-2"></i>Export Reports</h1>
+            <h1 style="color: white; margin: 0; font-size: 2rem;"><i class="fas fa-chart-column me-2"></i>Report</h1>
+            <p class="mb-0 mt-2" style="color: rgba(255,255,255,0.85);">View the latest records first, then download PDF or Excel if needed.</p>
         </div>
     </div>
 </div>
@@ -25,82 +26,223 @@
 </div>
 @endif
 
+<div class="row mb-3">
+    <div class="col-md-3 col-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Students</div>
+                <div class="fs-3 fw-bold">{{ $students->count() }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Degrees</div>
+                <div class="fs-3 fw-bold">{{ $degrees->count() }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Courses</div>
+                <div class="fs-3 fw-bold">{{ $courses->count() }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Users</div>
+                <div class="fs-3 fw-bold">{{ $users->count() }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
-    <!-- Students Export -->
-    <div class="col-md-6 mb-4">
+    <div class="col-12 mb-4">
         <div class="card shadow-sm">
             <div class="card-header" style="background-color: var(--primary); color: white;">
                 <h5 class="mb-0"><i class="fas fa-users me-2"></i>Students Report</h5>
             </div>
             <div class="card-body">
-                <p class="text-muted">Export all students data to PDF or Excel format.</p>
+                <p class="text-muted">View all student details before downloading the report.</p>
                 <div class="d-grid gap-2">
                     <a href="{{ route('export.students.pdf') }}" class="btn btn-outline-primary" title="Download as PDF">
-                        <i class="fas fa-file-pdf me-2"></i>Export to PDF
+                        <i class="fas fa-file-pdf me-2"></i>Download PDF
                     </a>
                     <a href="{{ route('export.students.excel') }}" class="btn btn-outline-success" title="Download as Excel">
-                        <i class="fas fa-file-excel me-2"></i>Export to Excel
+                        <i class="fas fa-file-excel me-2"></i>Download Excel
                     </a>
+                </div>
+                <div class="table-responsive mt-4">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Contact</th>
+                                <th>Age</th>
+                                <th>Degree</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($students as $student)
+                                <tr>
+                                    <td>{{ $student->id }}</td>
+                                    <td>{{ $student->fname }} {{ $student->mname }} {{ $student->lname }}</td>
+                                    <td>{{ $student->email }}</td>
+                                    <td>{{ $student->contact_no ?? 'N/A' }}</td>
+                                    <td>{{ $student->age ?? 'N/A' }}</td>
+                                    <td>{{ $student->degree?->title ?? 'N/A' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No students found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Degrees Export -->
-    <div class="col-md-6 mb-4">
+    <div class="col-12 mb-4">
         <div class="card shadow-sm">
             <div class="card-header" style="background-color: var(--primary); color: white;">
                 <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Degrees Report</h5>
             </div>
             <div class="card-body">
-                <p class="text-muted">Export all degrees data to PDF or Excel format.</p>
+                <p class="text-muted">View degree details and student counts.</p>
                 <div class="d-grid gap-2">
                     <a href="{{ route('export.degrees.pdf') }}" class="btn btn-outline-primary" title="Download as PDF">
-                        <i class="fas fa-file-pdf me-2"></i>Export to PDF
+                        <i class="fas fa-file-pdf me-2"></i>Download PDF
                     </a>
                     <a href="{{ route('export.degrees.excel') }}" class="btn btn-outline-success" title="Download as Excel">
-                        <i class="fas fa-file-excel me-2"></i>Export to Excel
+                        <i class="fas fa-file-excel me-2"></i>Download Excel
                     </a>
+                </div>
+                <div class="table-responsive mt-4">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Students Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($degrees as $degree)
+                                <tr>
+                                    <td>{{ $degree->id }}</td>
+                                    <td>{{ $degree->title }}</td>
+                                    <td>{{ $degree->description ?? 'N/A' }}</td>
+                                    <td>{{ $degree->students_count }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No degrees found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Courses Export -->
-    <div class="col-md-6 mb-4">
+    <div class="col-12 mb-4">
         <div class="card shadow-sm">
             <div class="card-header" style="background-color: var(--primary); color: white;">
                 <h5 class="mb-0"><i class="fas fa-book me-2"></i>Courses Report</h5>
             </div>
             <div class="card-body">
-                <p class="text-muted">Export all courses data to PDF or Excel format.</p>
+                <p class="text-muted">View course details and enrolled student counts.</p>
                 <div class="d-grid gap-2">
                     <a href="{{ route('export.courses.pdf') }}" class="btn btn-outline-primary" title="Download as PDF">
-                        <i class="fas fa-file-pdf me-2"></i>Export to PDF
+                        <i class="fas fa-file-pdf me-2"></i>Download PDF
                     </a>
                     <a href="{{ route('export.courses.excel') }}" class="btn btn-outline-success" title="Download as Excel">
-                        <i class="fas fa-file-excel me-2"></i>Export to Excel
+                        <i class="fas fa-file-excel me-2"></i>Download Excel
                     </a>
+                </div>
+                <div class="table-responsive mt-4">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Code</th>
+                                <th>Title</th>
+                                <th>Students Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($courses as $course)
+                                <tr>
+                                    <td>{{ $course->id }}</td>
+                                    <td>{{ $course->code ?? 'N/A' }}</td>
+                                    <td>{{ $course->title }}</td>
+                                    <td>{{ $course->students_count }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No courses found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Users Export -->
-    <div class="col-md-6 mb-4">
+    <div class="col-12 mb-4">
         <div class="card shadow-sm">
             <div class="card-header" style="background-color: var(--primary); color: white;">
                 <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Users Report</h5>
             </div>
             <div class="card-body">
-                <p class="text-muted">Export all system users data to PDF or Excel format.</p>
+                <p class="text-muted">View user details and account roles.</p>
                 <div class="d-grid gap-2">
                     <a href="{{ route('export.users.pdf') }}" class="btn btn-outline-primary" title="Download as PDF">
-                        <i class="fas fa-file-pdf me-2"></i>Export to PDF
+                        <i class="fas fa-file-pdf me-2"></i>Download PDF
                     </a>
                     <a href="{{ route('export.users.excel') }}" class="btn btn-outline-success" title="Download as Excel">
-                        <i class="fas fa-file-excel me-2"></i>Export to Excel
+                        <i class="fas fa-file-excel me-2"></i>Download Excel
                     </a>
+                </div>
+                <div class="table-responsive mt-4">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($users as $user)
+                                <tr>
+                                    <td>{{ $user->id }}</td>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->role ?? 'user' }}</td>
+                                    <td>{{ $user->created_at?->format('Y-m-d') ?? 'N/A' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No users found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -156,6 +298,14 @@
     .text-muted {
         color: #6c757d;
         font-size: 0.95rem;
+    }
+
+    .table thead th {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #6c757d;
+        border-bottom-color: #e9ecef;
     }
 </style>
 @endsection

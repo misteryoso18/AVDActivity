@@ -370,6 +370,9 @@
                     <a href="{{ route('degrees.index') }}" data-ajax-link="true" data-target="#ajaxPageContent">
                         <span class="nav-icon"><i class="fas fa-graduation-cap"></i></span> Degrees
                     </a>
+                    <a href="{{ route('report.index') }}" data-ajax-link="true" data-target="#ajaxPageContent">
+                        <span class="nav-icon"><i class="fas fa-chart-column"></i></span> Report
+                    </a>
                     <a href="{{ route('logs') }}" data-ajax-link="true" data-target="#ajaxPageContent">
                         <span class="nav-icon"><i class="fas fa-file-alt"></i></span> System Logs
                     </a>

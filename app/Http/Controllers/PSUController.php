@@ -9,7 +9,7 @@ class PSUController extends Controller
 
     public function welcome()
     {
-        return 'Welcome to PSU! Author: Rosario, Mark Rejie J. | Date: February 24, 2026';
+        return 'Welcome to PSU! Author: Datuin Aljon V | Date: Marc 20, 2024';
     }
 
         public function vision()

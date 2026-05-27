@@ -230,10 +230,15 @@ class ExportController extends Controller
     }
 
     /**
-     * Show export options page
+     * Show reports dashboard
      */
     public function index()
     {
-        return view('admin.exports.index');
+        return view('admin.exports.index', [
+            'students' => Student::with('degree')->latest()->get(),
+            'degrees' => Degree::withCount('students')->latest()->get(),
+            'courses' => Course::withCount('students')->latest()->get(),
+            'users' => User::latest()->get(),
+        ]);
     }
 }
