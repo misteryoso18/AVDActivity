@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 class ExcelExportService
 {
     /**
-    * Export data to an Excel-compatible HTML spreadsheet (.xls)
+    * Export data to a CSV file that opens directly in Excel.
      *
      * @param Collection|array $data Data to export
      * @param string $filename Output filename
@@ -34,13 +34,13 @@ class ExcelExportService
                 }, $data);
             }
 
-            // Add .xls extension
-            if (!str_ends_with(strtolower($filename), '.xls')) {
-                $filename = preg_replace('/\.(csv|xlsx)$/i', '', $filename) . '.xls';
+            // Add .csv extension
+            if (!str_ends_with(strtolower($filename), '.csv')) {
+                $filename = preg_replace('/\.(xls|xlsx)$/i', '', $filename) . '.csv';
             }
 
             // Set headers for download
-            header('Content-Type: application/vnd.ms-excel; charset=UTF-8');
+            header('Content-Type: text/csv; charset=UTF-8');
             header('Content-Disposition: attachment; filename="' . $filename . '"');
             header('Cache-Control: max-age=0');
             header('Cache-Control: max-age=1');
@@ -49,8 +49,8 @@ class ExcelExportService
             header('Cache-Control: cache, must-revalidate');
             header('Pragma: public');
 
-            // Create Excel-readable HTML table
-            echo self::generateExcelHtml($data, $headers);
+            // Create UTF-8 CSV with BOM so Excel opens it cleanly.
+            echo self::generateCsvContent($data, $headers);
 
         } catch (Exception $e) {
             throw new Exception('Excel Export Error: ' . $e->getMessage());
@@ -108,42 +108,38 @@ class ExcelExportService
     }
 
     /**
-     * Generate Excel-readable HTML format
+     * Generate CSV content
      *
      * @param array $data Data to export
      * @param array $headers Column headers
-     * @return string HTML content
+     * @return string CSV content
      */
-    private static function generateExcelHtml($data, $headers = [])
+    private static function generateCsvContent($data, $headers = [])
     {
-        $html = '<html><head><meta charset="UTF-8"></head><body>';
-        $html .= '<table border="1">';
+        $output = fopen('php://temp', 'r+');
+
+        if ($output === false) {
+            throw new Exception('Unable to create CSV output stream.');
+        }
+
+        // UTF-8 BOM helps Excel detect encoding correctly.
+        fwrite($output, "\xEF\xBB\xBF");
 
         if (!empty($headers)) {
-            $html .= '<tr>';
-            foreach ($headers as $header) {
-                $html .= '<th>' . htmlspecialchars((string) $header) . '</th>';
-            }
-            $html .= '</tr>';
+            fputcsv($output, $headers);
         } elseif (!empty($data)) {
-            $html .= '<tr>';
-            foreach (array_keys($data[0]) as $key) {
-                $html .= '<th>' . htmlspecialchars((string) $key) . '</th>';
-            }
-            $html .= '</tr>';
+            fputcsv($output, array_keys($data[0]));
         }
 
         foreach ($data as $row) {
-            $html .= '<tr>';
-            foreach ($row as $cell) {
-                $html .= '<td>' . htmlspecialchars((string) $cell) . '</td>';
-            }
-            $html .= '</tr>';
+            fputcsv($output, $row);
         }
 
-        $html .= '</table></body></html>';
+        rewind($output);
+        $csv = stream_get_contents($output);
+        fclose($output);
 
-        return $html;
+        return $csv === false ? '' : $csv;
     }
 
     /**
