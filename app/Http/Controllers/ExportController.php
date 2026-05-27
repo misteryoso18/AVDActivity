@@ -66,7 +66,7 @@ class ExportController extends Controller
             // Export to Excel
             ExcelExportService::exportToExcel(
                 $data,
-                'students_report_' . now()->format('Y-m-d_H-i-s') . '.csv',
+                'students_report_' . now()->format('Y-m-d_H-i-s') . '.xlsx',
                 array_keys(!empty($data) ? $data[0] : [])
             );
 
@@ -117,7 +117,7 @@ class ExportController extends Controller
 
             ExcelExportService::exportToExcel(
                 $data,
-                'degrees_report_' . now()->format('Y-m-d_H-i-s') . '.csv',
+                'degrees_report_' . now()->format('Y-m-d_H-i-s') . '.xlsx',
                 array_keys(!empty($data) ? $data[0] : [])
             );
 
@@ -168,7 +168,7 @@ class ExportController extends Controller
 
             ExcelExportService::exportToExcel(
                 $data,
-                'courses_report_' . now()->format('Y-m-d_H-i-s') . '.csv',
+                'courses_report_' . now()->format('Y-m-d_H-i-s') . '.xlsx',
                 array_keys(!empty($data) ? $data[0] : [])
             );
 
@@ -220,7 +220,7 @@ class ExportController extends Controller
 
             ExcelExportService::exportToExcel(
                 $data,
-                'users_report_' . now()->format('Y-m-d_H-i-s') . '.csv',
+                'users_report_' . now()->format('Y-m-d_H-i-s') . '.xlsx',
                 array_keys(!empty($data) ? $data[0] : [])
             );
 

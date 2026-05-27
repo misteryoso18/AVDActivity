@@ -34,6 +34,57 @@ class ExcelExportService
                 }, $data);
             }
 
+            // Prefer generating a real .xlsx when PhpSpreadsheet is available
+            if (class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')) {
+                // Ensure filename ends with .xlsx
+                if (!str_ends_with(strtolower($filename), '.xlsx')) {
+                    $filename = preg_replace('/\.(csv|xls)$/i', '', $filename) . '.xlsx';
+                }
+
+                // Use PhpSpreadsheet to create a real XLSX file
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+
+                // Headers
+                if (!empty($headers)) {
+                    $col = 1;
+                    foreach ($headers as $header) {
+                        $coord = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '1';
+                        $sheet->setCellValue($coord, (string)$header);
+                        $col++;
+                    }
+                } elseif (!empty($data)) {
+                    $col = 1;
+                    foreach (array_keys($data[0]) as $key) {
+                        $coord = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . '1';
+                        $sheet->setCellValue($coord, (string)$key);
+                        $col++;
+                    }
+                }
+
+                // Data rows
+                $rowNum = 2;
+                foreach ($data as $row) {
+                    $col = 1;
+                    foreach ($row as $cell) {
+                        $coord = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . (string)$rowNum;
+                        $sheet->setCellValue($coord, $cell);
+                        $col++;
+                    }
+                    $rowNum++;
+                }
+
+                // Output headers
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment; filename="' . $filename . '"');
+                header('Cache-Control: max-age=0');
+
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                $writer->save('php://output');
+                return;
+            }
+
+            // Fallback: output CSV when PhpSpreadsheet not available
             // Add .csv extension
             if (!str_ends_with(strtolower($filename), '.csv')) {
                 $filename = preg_replace('/\.(xls|xlsx)$/i', '', $filename) . '.csv';
