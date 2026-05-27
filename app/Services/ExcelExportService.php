@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 class ExcelExportService
 {
     /**
-     * Export data to Excel (CSV format)
+    * Export data to an Excel-compatible HTML spreadsheet (.xls)
      *
      * @param Collection|array $data Data to export
      * @param string $filename Output filename
@@ -34,13 +34,13 @@ class ExcelExportService
                 }, $data);
             }
 
-            // Add .xlsx extension
-            if (!str_ends_with($filename, '.xlsx')) {
-                $filename = str_replace('.csv', '', $filename) . '.xlsx';
+            // Add .xls extension
+            if (!str_ends_with(strtolower($filename), '.xls')) {
+                $filename = preg_replace('/\.(csv|xlsx)$/i', '', $filename) . '.xls';
             }
 
             // Set headers for download
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Type: application/vnd.ms-excel; charset=UTF-8');
             header('Content-Disposition: attachment; filename="' . $filename . '"');
             header('Cache-Control: max-age=0');
             header('Cache-Control: max-age=1');
@@ -49,9 +49,8 @@ class ExcelExportService
             header('Cache-Control: cache, must-revalidate');
             header('Pragma: public');
 
-            // Create simple Excel XML format
-            $xmlContent = self::generateExcelXML($data, $headers);
-            echo $xmlContent;
+            // Create Excel-readable HTML table
+            echo self::generateExcelHtml($data, $headers);
 
         } catch (Exception $e) {
             throw new Exception('Excel Export Error: ' . $e->getMessage());
@@ -109,58 +108,42 @@ class ExcelExportService
     }
 
     /**
-     * Generate Excel XML format (compatible with Excel)
+     * Generate Excel-readable HTML format
      *
      * @param array $data Data to export
      * @param array $headers Column headers
-     * @return string XML content
+     * @return string HTML content
      */
-    private static function generateExcelXML($data, $headers = [])
+    private static function generateExcelHtml($data, $headers = [])
     {
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<?mso-application progid="Excel.Sheet"?>' . "\n";
-        $xml .= '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-                xmlns:o="urn:schemas-microsoft-com:office:office"
-                xmlns:x="urn:schemas-microsoft-com:office:excel"
-                xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
-                xmlns:html="http://www.w3.org/TR/REC-html40">' . "\n";
-        $xml .= '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">' . "\n";
-        $xml .= '<Created>' . date('Y-m-dT H:i:sZ') . '</Created>' . "\n";
-        $xml .= '</DocumentProperties>' . "\n";
-        $xml .= '<Worksheet ss:Name="Sheet1">' . "\n";
-        $xml .= '<Table>' . "\n";
+        $html = '<html><head><meta charset="UTF-8"></head><body>';
+        $html .= '<table border="1">';
 
-        // Add headers
         if (!empty($headers)) {
-            $xml .= '<Row>' . "\n";
+            $html .= '<tr>';
             foreach ($headers as $header) {
-                $xml .= '<Cell><Data ss:Type="String">' . htmlspecialchars($header) . '</Data></Cell>' . "\n";
+                $html .= '<th>' . htmlspecialchars((string) $header) . '</th>';
             }
-            $xml .= '</Row>' . "\n";
+            $html .= '</tr>';
         } elseif (!empty($data)) {
-            // Use first row keys as headers
-            $xml .= '<Row>' . "\n";
+            $html .= '<tr>';
             foreach (array_keys($data[0]) as $key) {
-                $xml .= '<Cell><Data ss:Type="String">' . htmlspecialchars($key) . '</Data></Cell>' . "\n";
+                $html .= '<th>' . htmlspecialchars((string) $key) . '</th>';
             }
-            $xml .= '</Row>' . "\n";
+            $html .= '</tr>';
         }
 
-        // Add data rows
         foreach ($data as $row) {
-            $xml .= '<Row>' . "\n";
+            $html .= '<tr>';
             foreach ($row as $cell) {
-                $type = is_numeric($cell) ? 'Number' : 'String';
-                $xml .= '<Cell><Data ss:Type="' . $type . '">' . htmlspecialchars((string)$cell) . '</Data></Cell>' . "\n";
+                $html .= '<td>' . htmlspecialchars((string) $cell) . '</td>';
             }
-            $xml .= '</Row>' . "\n";
+            $html .= '</tr>';
         }
 
-        $xml .= '</Table>' . "\n";
-        $xml .= '</Worksheet>' . "\n";
-        $xml .= '</Workbook>' . "\n";
+        $html .= '</table></body></html>';
 
-        return $xml;
+        return $html;
     }
 
     /**

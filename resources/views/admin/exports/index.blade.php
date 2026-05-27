@@ -77,36 +77,6 @@
                         <i class="fas fa-file-excel me-2"></i>Download Excel
                     </a>
                 </div>
-                <div class="table-responsive mt-4">
-                    <table class="table table-sm align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Contact</th>
-                                <th>Age</th>
-                                <th>Degree</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($students as $student)
-                                <tr>
-                                    <td>{{ $student->id }}</td>
-                                    <td>{{ $student->fname }} {{ $student->mname }} {{ $student->lname }}</td>
-                                    <td>{{ $student->email }}</td>
-                                    <td>{{ $student->contact_no ?? 'N/A' }}</td>
-                                    <td>{{ $student->age ?? 'N/A' }}</td>
-                                    <td>{{ $student->degree?->title ?? 'N/A' }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted">No students found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </div>
@@ -125,32 +95,6 @@
                     <a href="{{ route('export.degrees.excel') }}" class="btn btn-outline-success" title="Download as Excel">
                         <i class="fas fa-file-excel me-2"></i>Download Excel
                     </a>
-                </div>
-                <div class="table-responsive mt-4">
-                    <table class="table table-sm align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>Students Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($degrees as $degree)
-                                <tr>
-                                    <td>{{ $degree->id }}</td>
-                                    <td>{{ $degree->title }}</td>
-                                    <td>{{ $degree->description ?? 'N/A' }}</td>
-                                    <td>{{ $degree->students_count }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">No degrees found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -171,32 +115,6 @@
                         <i class="fas fa-file-excel me-2"></i>Download Excel
                     </a>
                 </div>
-                <div class="table-responsive mt-4">
-                    <table class="table table-sm align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Code</th>
-                                <th>Title</th>
-                                <th>Students Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($courses as $course)
-                                <tr>
-                                    <td>{{ $course->id }}</td>
-                                    <td>{{ $course->code ?? 'N/A' }}</td>
-                                    <td>{{ $course->title }}</td>
-                                    <td>{{ $course->students_count }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">No courses found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </div>
@@ -215,34 +133,6 @@
                     <a href="{{ route('export.users.excel') }}" class="btn btn-outline-success" title="Download as Excel">
                         <i class="fas fa-file-excel me-2"></i>Download Excel
                     </a>
-                </div>
-                <div class="table-responsive mt-4">
-                    <table class="table table-sm align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Created At</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($users as $user)
-                                <tr>
-                                    <td>{{ $user->id }}</td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->role ?? 'user' }}</td>
-                                    <td>{{ $user->created_at?->format('Y-m-d') ?? 'N/A' }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">No users found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
