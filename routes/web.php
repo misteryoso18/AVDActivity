@@ -8,6 +8,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\DegreeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ExportController;
 
 // Maintenance route - ALWAYS accessible
 Route::get('/maintenance', function () {
@@ -79,6 +80,17 @@ Route::middleware('App\Http\Middleware\DownForMaintnanceMW')->group(function () 
             Route::post('/admin/store-student', [UserController::class, 'storeStudent'])->name('admin.store.student');
             Route::get('/admin/add-teacher', [UserController::class, 'showAddTeacherForm'])->name('admin.add.teacher');
             Route::post('/admin/store-teacher', [UserController::class, 'storeTeacher'])->name('admin.store.teacher');
+
+            // Export routes
+            Route::get('/exports', [ExportController::class, 'index'])->name('export.index');
+            Route::get('/exports/students/pdf', [ExportController::class, 'exportStudentsPDF'])->name('export.students.pdf');
+            Route::get('/exports/students/excel', [ExportController::class, 'exportStudentsExcel'])->name('export.students.excel');
+            Route::get('/exports/degrees/pdf', [ExportController::class, 'exportDegreesPDF'])->name('export.degrees.pdf');
+            Route::get('/exports/degrees/excel', [ExportController::class, 'exportDegreesExcel'])->name('export.degrees.excel');
+            Route::get('/exports/courses/pdf', [ExportController::class, 'exportCoursesPDF'])->name('export.courses.pdf');
+            Route::get('/exports/courses/excel', [ExportController::class, 'exportCoursesExcel'])->name('export.courses.excel');
+            Route::get('/exports/users/pdf', [ExportController::class, 'exportUsersPDF'])->name('export.users.pdf');
+            Route::get('/exports/users/excel', [ExportController::class, 'exportUsersExcel'])->name('export.users.excel');
         });
 
 
