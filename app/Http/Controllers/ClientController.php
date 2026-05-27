@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class ClientController extends Controller
 {
     public function displayGreetings() {
-        $name = "rejie";
+        $name = "Aljon Datuin V.";
         $address = "scc";
         $age = "21";
        // return view ('greetings', ['name'=>$name]);
@@ -15,7 +15,7 @@ class ClientController extends Controller
     }
     public function displayProfile(){
         $grade = 85;
-        $name = "Mark Rejie J. Rosario";
+        $name = "Aljon Datuin V.";
         $sex = "Male";
         $address = "San Carlos City";
         
