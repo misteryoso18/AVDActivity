@@ -1,9 +1,12 @@
 # Mas lightweight kaysa FPM – sapat na ang CLI server para sa Render
 FROM php:8.4-cli
 
+# Install system packages required for building PHP extensions used by PhpSpreadsheet
 RUN apt-get update && apt-get install -y \
-    git unzip curl libzip-dev zip libpng-dev \
-    && docker-php-ext-install pdo pdo_mysql zip
+    git unzip curl libzip-dev zip libpng-dev libjpeg-dev libfreetype6-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype \
+    && docker-php-ext-install -j$(nproc) pdo pdo_mysql zip gd \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
